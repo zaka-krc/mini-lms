@@ -55,12 +55,21 @@ if (!exists('composer')) {
 
 // ── 1. Répertoires requis ──────────────────────────────────────────
 
-const bootstrapCachePath = path.join(root, 'bootstrap', 'cache');
-if (!fs.existsSync(bootstrapCachePath)) {
-    step(1, 7, 'Création du répertoire bootstrap/cache...');
-    fs.mkdirSync(bootstrapCachePath, { recursive: true });
+const requiredDirs = [
+    path.join(root, 'bootstrap', 'cache'),
+    path.join(root, 'storage', 'app', 'public'),
+    path.join(root, 'storage', 'framework', 'cache', 'data'),
+    path.join(root, 'storage', 'framework', 'sessions'),
+    path.join(root, 'storage', 'framework', 'views'),
+    path.join(root, 'storage', 'logs'),
+];
+
+const missingDirs = requiredDirs.filter(d => !fs.existsSync(d));
+if (missingDirs.length > 0) {
+    step(1, 7, 'Création des répertoires requis...');
+    for (const d of missingDirs) fs.mkdirSync(d, { recursive: true });
 } else {
-    step(1, 7, 'Répertoire bootstrap/cache déjà présent.');
+    step(1, 7, 'Répertoires requis déjà présents.');
 }
 
 // ── 2. Fichier .env ────────────────────────────────────────────────
