@@ -1,0 +1,10 @@
+/node_modules
+/vendor
+/.vscode
+.DS_Store
+.env
+.env.local
+.env.*.local
+*.log
+storage/
+bootstrap/cache/
