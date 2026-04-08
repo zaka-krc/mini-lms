@@ -53,26 +53,36 @@ if (!exists('composer')) {
     process.exit(1);
 }
 
-// ── 1. Fichier .env ────────────────────────────────────────────────
+// ── 1. Répertoires requis ──────────────────────────────────────────
+
+const bootstrapCachePath = path.join(root, 'bootstrap', 'cache');
+if (!fs.existsSync(bootstrapCachePath)) {
+    step(1, 7, 'Création du répertoire bootstrap/cache...');
+    fs.mkdirSync(bootstrapCachePath, { recursive: true });
+} else {
+    step(1, 7, 'Répertoire bootstrap/cache déjà présent.');
+}
+
+// ── 2. Fichier .env ────────────────────────────────────────────────
 
 const envPath = path.join(root, '.env');
 if (!fs.existsSync(envPath)) {
-    step(1, 6, 'Copie de .env.example vers .env...');
+    step(2, 7, 'Copie de .env.example vers .env...');
     fs.copyFileSync(path.join(root, '.env.example'), envPath);
 } else {
-    step(1, 6, 'Fichier .env déjà présent.');
+    step(2, 7, 'Fichier .env déjà présent.');
 }
 
-// ── 2. Dépendances PHP ─────────────────────────────────────────────
+// ── 3. Dépendances PHP ─────────────────────────────────────────────
 
 if (!fs.existsSync(path.join(root, 'vendor'))) {
-    step(2, 6, 'Installation des dépendances PHP (composer install)...');
+    step(3, 7, 'Installation des dépendances PHP (composer install)...');
     run('composer', ['install', '--no-interaction']);
 } else {
-    step(2, 6, 'Dépendances PHP déjà installées.');
+    step(3, 7, 'Dépendances PHP déjà installées.');
 }
 
-// ── 3. Dépendances Node.js ─────────────────────────────────────────
+// ── 4. Dépendances Node.js ─────────────────────────────────────────
 // Détecte si node_modules a été installé sur une autre plateforme (ex: Windows → WSL)
 // et réinstalle automatiquement si c'est le cas.
 
@@ -83,47 +93,47 @@ const installedPlatform = nodeModulesExist && fs.existsSync(platformFile)
     : null;
 
 if (!nodeModulesExist) {
-    step(3, 6, 'Installation des dépendances Node.js (npm install)...');
+    step(4, 7, 'Installation des dépendances Node.js (npm install)...');
     const lockFile = path.join(root, 'package-lock.json');
     if (fs.existsSync(lockFile)) fs.rmSync(lockFile);
     run('npm', ['install']);
     fs.writeFileSync(platformFile, process.platform);
 } else if (installedPlatform !== process.platform) {
-    step(3, 6, `Réinstallation des dépendances Node.js (plateforme changée : ${installedPlatform ?? '?'} → ${process.platform})...`);
+    step(4, 7, `Réinstallation des dépendances Node.js (plateforme changée : ${installedPlatform ?? '?'} → ${process.platform})...`);
     fs.rmSync(path.join(root, 'node_modules'), { recursive: true, force: true });
     const lockFile = path.join(root, 'package-lock.json');
     if (fs.existsSync(lockFile)) fs.rmSync(lockFile);
     run('npm', ['install']);
     fs.writeFileSync(platformFile, process.platform);
 } else {
-    step(3, 6, 'Dépendances Node.js déjà installées.');
+    step(4, 7, 'Dépendances Node.js déjà installées.');
 }
 
-// ── 4. Clé d'application ───────────────────────────────────────────
+// ── 5. Clé d'application ───────────────────────────────────────────
 
 const envContent = fs.readFileSync(envPath, 'utf8');
 if (!envContent.includes('APP_KEY=base64:')) {
-    step(4, 6, "Génération de la clé d'application...");
+    step(5, 7, "Génération de la clé d'application...");
     run('php', ['artisan', 'key:generate', '--quiet']);
 } else {
-    step(4, 6, "Clé d'application déjà définie.");
+    step(5, 7, "Clé d'application déjà définie.");
 }
 
-// ── 5. Base de données ─────────────────────────────────────────────
+// ── 6. Base de données ─────────────────────────────────────────────
 
 const dbPath = path.join(root, 'database', 'database.sqlite');
 if (!fs.existsSync(dbPath)) {
-    step(5, 6, 'Création de la base de données et insertion des données de démo...');
+    step(6, 7, 'Création de la base de données et insertion des données de démo...');
     fs.writeFileSync(dbPath, '');
     run('php', ['artisan', 'migrate', '--force', '--quiet']);
     run('php', ['artisan', 'db:seed', '--force', '--quiet']);
 } else {
-    step(5, 6, 'Base de données déjà présente.');
+    step(6, 7, 'Base de données déjà présente.');
 }
 
-// ── 6. Démarrage ───────────────────────────────────────────────────
+// ── 7. Démarrage ───────────────────────────────────────────────────
 
-step(6, 6, 'Démarrage des serveurs...');
+step(7, 7, 'Démarrage des serveurs...');
 console.log(`
  ┌─────────────────────────────────────────┐
  │  Application : http://localhost:8000     │
