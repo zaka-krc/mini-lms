@@ -6,15 +6,51 @@ Développé avec **Laravel 11**, **Tailwind CSS** et **SQLite**.
 
 ---
 
+## Installation des prérequis
+
+### Sur Windows
+
+Utiliser **WSL2** (Windows Subsystem for Linux) pour accéder à un environnement Linux natif avec PHP, Composer et Node.js :
+
+```bash
+# Installer WSL2 : https://learn.microsoft.com/windows/wsl/install
+wsl --install
+```
+
+Une fois WSL installé, les prérequis seront disponibles nativement.
+
+### Sur macOS
+
+```bash
+# Utiliser Homebrew
+brew install php composer node
+```
+
+### Sur Linux (Ubuntu/Debian)
+
+Tous les prérequis sont disponibles nativement :
+
+```bash
+sudo apt-get install php php-cli composer nodejs
+```
+
+---
+
 ## Démarrage rapide
+
+```bash
+npm install
+```
+
+Ensuite, lancer l'application avec :
 
 ```bash
 node start.js
 ```
 
-Le script s'occupe de tout : installation des dépendances, configuration de la base de données, seeders, et lancement des serveurs. L'application sera disponible sur **http://localhost:8000**.
+L'application sera disponible sur **http://localhost:8000**.
 
-> **Prérequis** : PHP >= 8.2, Composer, Node.js >= 18 — fonctionne sur Windows, macOS et Linux.
+> **Prérequis** : PHP >= 8.2, Composer, Node.js >= 18
 
 ---
 
